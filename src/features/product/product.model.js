@@ -1,3 +1,4 @@
+import ApplicationError  from '../../errorHandler/applicationError.js';
 import UserModel from '../user/user.model.js';
 
 export default class ProductModel {
@@ -42,13 +43,13 @@ export default class ProductModel {
     const user = UserModel.getAll().find((u) => u.id == userID);
     if (!user) {
       // user-defined error.
-      throw new Error('User Not Found');
+      throw new ApplicationError('User Not Found', 404);
     }
 
     // Validate Product
     const product = products.find((p) => p.id == productID);
     if (!product) {
-      return 'Product Not Found';
+      throw new ApplicationError('Product Not Found', 400);
     }
 
     // 2. Check if there are any ratings and if not then add ratings array.
