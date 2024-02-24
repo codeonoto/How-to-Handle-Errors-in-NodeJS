@@ -41,6 +41,7 @@ export default class ProductModel {
     // 1. Validate user and product
     const user = UserModel.getAll().find((u) => u.id == userID);
     if (!user) {
+      // user-defined error.
       throw new Error('User Not Found');
     }
 
