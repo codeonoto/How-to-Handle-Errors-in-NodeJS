@@ -1,30 +1,26 @@
-import fs from 'fs';
+// Import the necessary modules here
 import winston from 'winston';
 
-const fsPromise = fs.promises;
-
-// async function log(logData) {
-//   try {
-//     logData = `\n ${new Date().toString()} - ${logData}`;
-//     await fsPromise.appendFile('log.txt', logData);
-//   } catch (error) {
-//     console.error(error);
-//   }
-// }
-
+// Configure winston logger
 const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  defaultMeta: { service: 'request-logging' },
-  transports: [new winston.transports.File({ filename: 'logs.txt' })],
+  transports: [
+    new winston.transports.File({ filename: 'logs.txt' }),
+  ],
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
 });
 
-const loggerMiddleware = async (req, res, next) => {
-  // 1. Log Request Body
-  if (!req.url.includes('signin')) {
-    const logData = `${req.url} - ${JSON.stringify(req.body)}`;
-    logger.info(logData);
-  }
+export const loggerMiddleware = async (req, res, next) => {
+  // Log request information
+  logger.info({
+    timestamp: new Date().toISOString(),
+    originalUrl: req.originalUrl,
+    requestBody: req.body,
+  });
+
+  // Call the next middleware or route handler
   next();
 };
 

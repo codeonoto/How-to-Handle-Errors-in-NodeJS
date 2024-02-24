@@ -16,7 +16,7 @@ export default class ProductController {
       price: parseFloat(price),
       sizes: sizes.split(','),
       imageUrl: req.file.filename,
-    }; 
+    };
 
     const createdRecord = ProductModel.add(newProduct);
     res.status(201).send(createdRecord);
@@ -26,19 +26,19 @@ export default class ProductController {
     const userID = req.query.userID;
     const productID = req.query.productID;
     const rating = req.query.rating;
-    const error = ProductModel.rateProduct(userID, productID, rating);
-    if (error) {
-      return res.status(400).send(error);
-    } else {
-      return res.status(200).send('Rating has been added');
+    try {
+      ProductModel.rateProduct(userID, productID, rating);
+    } catch (error) {
+      return res.status(400).send(error.message);
     }
+    return res.status(200).send('Rating has been added');
   }
 
   getOneProduct(req, res) {
     const id = req.params.id;
     const product = ProductModel.get(id);
     if (!product) {
-      res.status(404).send('Product Not Found');
+      throw new Error('Product Not Found');
     } else {
       return res.status(200).send(product);
     }
